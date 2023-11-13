@@ -8,7 +8,7 @@ provider "aws" {
 resource "aws_vpc" "wemerch" {
     cidr_block = "10.0.0.0/16"
     tags = {
-        Name = "production"
+        Name = "development"
     }
 }
 # 2. create internet gateway
@@ -30,7 +30,7 @@ resource "aws_route_table" "wemerch_rt" {
   }
 
   tags = {
-    Name = "production"
+    Name = "development"
   }
 }
 # 4. create subnet
@@ -40,7 +40,7 @@ resource "aws_subnet" "wemerch_subnet_1" {
     availability_zone = "us-east-1a"
 
     tags = {
-        Name = "production"
+        Name = "development"
     }
 }
 # 5. associate subnet with route table
