@@ -10,8 +10,8 @@ variable "lambda_role" {
     type = string
 }
 
-resource "aws_lambda_function" "wemerch-lambdamm" {
-  function_name = "ServerlessExample"
+resource "aws_lambda_function" "wemerch-lambda" {
+  function_name = "gql"
 
   # The bucket name as created earlier with "aws s3api create-bucket"
   s3_bucket = var.s3_deployment_bucket
