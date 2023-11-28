@@ -37,5 +37,5 @@ resource "aws_api_gateway_deployment" "wemerch_gateway_deployment" {
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.wemerch_api_gateway_rest_api.id}"
-  stage_name  = "test"
+  stage_name  = "dev"
 }

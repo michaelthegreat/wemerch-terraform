@@ -39,6 +39,17 @@ resource "aws_api_gateway_method" "proxy" {
   authorization = "NONE"
 }
 
+resource "aws_lambda_permission" "apigw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.wemerch_lambda.function_name}"
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/* portion grants access from any method on any resource
+  # within the API Gateway "REST API".
+  source_arn = "${aws_api_gateway_rest_api.wemerch_api_gateway_rest_api.execution_arn}/*/*"
+}
+
 
 # IAM role which dictates what other AWS services the Lambda function
 # may access.
