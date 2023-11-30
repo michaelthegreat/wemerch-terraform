@@ -20,10 +20,14 @@ resource "aws_lambda_function" "wemerch_lambda" {
   # "main" is the filename within the zip file (main.js) and "handler"
   # is the name of the property under which the handler function was
   # exported in that file.
-  handler = "main.handler"
+  handler = "dist/handlers.gql"
   runtime = "nodejs18.x"
 
   role = var.lambda_role
+  vpc_config {
+    subnet_ids = [aws_subnet.wemerch_private_subnet.id]
+  security_group_ids = [aws_security_group.wemerch_lambda_security_group.id]
+  }
 }
 
 resource "aws_api_gateway_resource" "proxy" {
@@ -50,7 +54,40 @@ resource "aws_lambda_permission" "apigw" {
   source_arn = "${aws_api_gateway_rest_api.wemerch_api_gateway_rest_api.execution_arn}/*/*"
 }
 
+resource "aws_security_group" "wemerch_lambda_security_group" {
+  name        = "wemerch-lambda-security-group"
+  description = "Allow inbound traffic"
+  vpc_id      = aws_vpc.wemerch.id
 
+  ingress {
+    description      = "TLS from VPC"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = [aws_vpc.wemerch.cidr_block]
+  }
+
+  ingress {
+    description      = "TLS from VPC"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = [aws_vpc.wemerch.cidr_block]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_tls"
+  }
+
+}
 # IAM role which dictates what other AWS services the Lambda function
 # may access.
 # resource "aws_iam_role" "lambda_exec" {
