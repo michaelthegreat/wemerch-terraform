@@ -25,7 +25,7 @@ resource "aws_lambda_function" "wemerch_lambda" {
 
   role = var.lambda_role
   vpc_config {
-    subnet_ids = [aws_subnet.wemerch_private_subnet.id]
+    subnet_ids = [aws_subnet.wemerch_private_subnet1.id, aws_subnet.wemerch_private_subnet2.id]
   security_group_ids = [aws_security_group.wemerch_lambda_security_group.id]
   }
 }
