@@ -98,3 +98,43 @@ resource "aws_route_table_association" "wemerch_private_subnet_association2" {
   subnet_id      = aws_subnet.wemerch_private_subnet1.id
   route_table_id = aws_route_table.wemerch_public_route_table.id
 }
+
+resource "aws_security_group" "wemerch_db_security_group" {
+  name        = "wemerch-db-security-group"
+  description = "Allow inbound traffic"
+  vpc_id      = aws_vpc.wemerch.id
+
+  ingress {
+    description      = "PSQL from VPC"
+    from_port        = 5432
+    to_port          = 5432
+    protocol         = "tcp"
+    security_groups = [aws_security_group.wemerch_lambda_security_group.id]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_tls"
+  }
+
+}
+
+resource "aws_eip" "wemerch_eip" {
+  domain = "vpc"
+}
+
+# nat gateway to allow the lambda to communicate with outside servers
+resource "aws_nat_gateway" "wemerch_nat_gateway" {
+  allocation_id = aws_eip.wemerch_eip.id
+  subnet_id     = aws_subnet.wemerch_public_subnet1.id
+  tags = {
+    Name = "wemerch-nat-gateway"
+  }
+}
