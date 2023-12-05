@@ -30,11 +30,21 @@ resource "aws_route_table" "wemerch_public_route_table" {
   }
 
   tags = {
-    Name = "production"
+    Name = "wemerch_public_route_table"
   }
 }
-# todo: create private route table
+resource "aws_route_table" "wemerch_private_route_table" {
+  vpc_id = aws_vpc.wemerch.id
 
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.wemerch_nat_gateway.id
+  }
+
+  tags = {
+    Name = "wemerch_private_route_table"
+  }
+}
 # 4. create subnets
 resource "aws_subnet" "wemerch_private_subnet1" {
     vpc_id = aws_vpc.wemerch.id
@@ -90,13 +100,13 @@ resource "aws_route_table_association" "wemerch_public_subnet_association2" {
 
 resource "aws_route_table_association" "wemerch_private_subnet_association1" {
   subnet_id      = aws_subnet.wemerch_private_subnet1.id
-  route_table_id = aws_route_table.wemerch_public_route_table.id
+  route_table_id = aws_route_table.wemerch_private_route_table.id
 }
 
 
 resource "aws_route_table_association" "wemerch_private_subnet_association2" {
   subnet_id      = aws_subnet.wemerch_private_subnet1.id
-  route_table_id = aws_route_table.wemerch_public_route_table.id
+  route_table_id = aws_route_table.wemerch_private_route_table.id
 }
 
 resource "aws_security_group" "wemerch_db_security_group" {
@@ -109,7 +119,7 @@ resource "aws_security_group" "wemerch_db_security_group" {
     from_port        = 5432
     to_port          = 5432
     protocol         = "tcp"
-    security_groups = [aws_security_group.wemerch_lambda_security_group.id]
+    security_groups = [aws_security_group.wemerch_lambda_security_group.id ]
   }
 
   egress {
@@ -121,7 +131,7 @@ resource "aws_security_group" "wemerch_db_security_group" {
   }
 
   tags = {
-    Name = "allow_tls"
+    Name = "allow_psql"
   }
 
 }
