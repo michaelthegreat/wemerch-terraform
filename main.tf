@@ -105,7 +105,7 @@ resource "aws_route_table_association" "wemerch_private_subnet_association1" {
 
 
 resource "aws_route_table_association" "wemerch_private_subnet_association2" {
-  subnet_id      = aws_subnet.wemerch_private_subnet1.id
+  subnet_id      = aws_subnet.wemerch_private_subnet2.id
   route_table_id = aws_route_table.wemerch_private_route_table.id
 }
 
