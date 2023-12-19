@@ -23,6 +23,7 @@ resource "aws_lambda_function" "wemerch_lambda" {
   handler = "dist/handlers.gql"
   runtime = "nodejs18.x"
   timeout = 30
+  memory_size = 256
 
   role = var.lambda_role
   vpc_config {
