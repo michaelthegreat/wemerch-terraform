@@ -32,10 +32,11 @@ resource "aws_lambda_function" "wemerch_lambda" {
   }
 }
 
+// todo rename from proxy => default
 resource "aws_api_gateway_resource" "proxy" {
   rest_api_id = "${aws_api_gateway_rest_api.wemerch_api_gateway_rest_api.id}"
   parent_id   = "${aws_api_gateway_rest_api.wemerch_api_gateway_rest_api.root_resource_id}"
-  path_part   = "{proxy+}"
+  path_part   = "$default"
 }
 
 resource "aws_api_gateway_method" "proxy" {
