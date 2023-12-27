@@ -1,7 +1,3 @@
-variable "s3_deployment_bucket" {
-    type = string
-}
-
 variable "rusty_listing_lookup_s3_deployment_key" {
     type = string
 }
@@ -11,13 +7,13 @@ resource "aws_lambda_function" "rll_lambda" {
 
   # The bucket name as created earlier with "aws s3api create-bucket"
   s3_bucket = var.s3_deployment_bucket
-  s3_key    = var.s3_deployment_key
+  s3_key    = var.rusty_listing_lookup_s3_deployment_key
 
   # "main" is the filename within the zip file (main.js) and "handler"
   # is the name of the property under which the handler function was
   # exported in that file.
-  handler = "dist/handlers.gql"
-  runtime = "nodejs18.x"
+  handler = "bootstrap"
+  runtime = "provided.al2"
   timeout = 30
   memory_size = 256
 
